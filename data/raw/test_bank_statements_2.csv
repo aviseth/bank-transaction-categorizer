@@ -1,0 +1,21 @@
+Date;Time;Date of posting;Time of posting;Text;Message;Transaction type;Card info;Amount;Currency;Sender;Receiver;Note;Balance
+2025-07-28;10:30:15;2025-07-28;10:30:15;PayPal Transfer;PayPal Transfer;account;;3.250,00;DKK;44455566677788;;850000.00
+2025-07-28;15:45:22;2025-07-29;08:20:33;Starbucks Coffee;Starbucks Coffee;card;487144******5678;-45,00;DKK;;;;846750.00
+2025-07-27;18:20:44;2025-07-28;05:15:22;AWS Services;AWS Services;card;487144******5678;-890,75;DKK;;;;846795.00
+2025-07-27;12:15:33;2025-07-27;12:15:33;Insurance Payment;Insurance Payment;account;;-1.800,00;DKK;;22233344455566;;847685.75
+2025-07-26;21:30:18;2025-07-27;04:45:11;Slack Premium;Slack Premium;card;487144******5678;-89,00;DKK;;;;849485.75
+2025-07-26;14:22:55;2025-07-26;14:22:55;Freelance Payment;Freelance Payment;account;;12.500,00;DKK;99988877766655;;849574.75
+2025-07-25;16:45:12;2025-07-26;03:30:44;Hotel Booking;Hotel Booking;card;487144******5678;-2.100,00;DKK;;;;837074.75
+2025-07-25;09:18:27;2025-07-25;09:18:27;Tax Payment;Tax Payment;account;;-8.500,00;DKK;;33344455566677;;839174.75
+2025-07-24;19:33:41;2025-07-25;06:22:15;Figma Professional;Figma Professional;card;487144******5678;-299,00;DKK;;;;847674.75
+2025-07-24;13:15:22;2025-07-24;13:15:22;Client Payment;Client Payment;account;;15.000,00;DKK;11122233344455;;847973.75
+2025-07-23;17:20:55;2025-07-24;04:15:33;Train Ticket;Train Ticket;card;487144******5678;-180,00;DKK;;;;832973.75
+2025-07-23;11:45:18;2025-07-23;11:45:18;Bank Fee;Bank Fee;account;;-25,00;DKK;;;;833153.75
+2025-07-22;20:15:44;2025-07-23;03:30:22;Canva Pro;Canva Pro;card;487144******5678;-149,00;DKK;;;;833178.75
+2025-07-22;14:30:27;2025-07-22;14:30:27;Freelance Income;Freelance Income;account;;7.200,00;DKK;66677788899900;;833327.75
+2025-07-21;16:45:33;2025-07-22;02:20:15;Online Course;Online Course;card;487144******5678;-450,00;DKK;;;;826127.75
+2025-07-21;10:22:18;2025-07-21;10:22:18;Utility Bill;Utility Bill;account;;-1.200,00;DKK;;44455566677788;;826577.75
+2025-07-20;18:30:22;2025-07-21;05:15:44;GitHub Pro;GitHub Pro;card;487144******5678;-49,00;DKK;;;;827777.75
+2025-07-20;12:15:55;2025-07-20;12:15:55;Salary July;Salary July;account;;42.000,00;DKK;;55566677788899;;827826.75
+2025-07-19;15:45:18;2025-07-20;02:30:33;Software License;Software License;card;487144******5678;-799,00;DKK;;;;785826.75
+2025-07-19;09:30:44;2025-07-19;09:30:44;International Transfer;International Transfer;internationalPayment;;-3.500,00;DKK;;;;786625.75

@@ -1,0 +1,21 @@
+Date;Time;Date of posting;Time of posting;Text;Message;Transaction type;Card info;Amount;Currency;Sender;Receiver;Note;Balance
+2025-08-15;09:15:30;2025-08-15;09:15:30;Netflix Subscription;Netflix Subscription;card;487144******1234;-89,00;DKK;;;;1250000.00
+2025-08-15;14:22:45;2025-08-15;14:22:45;Spotify Premium;Spotify Premium;card;487144******1234;-99,00;DKK;;;;1249901.00
+2025-08-14;16:30:12;2025-08-15;08:45:22;Amazon Purchase;Amazon Purchase;card;487144******1234;-1.250,75;DKK;;;;1249802.00
+2025-08-14;11:45:18;2025-08-14;11:45:18;Salary August;Salary August;account;;45.000,00;DKK;;12345678901234;;1262052.00
+2025-08-13;19:20:33;2025-08-14;06:15:44;Uber Ride;Uber Ride;card;487144******1234;-85,50;DKK;;;;1217052.00
+2025-08-13;12:15:27;2025-08-13;12:15:27;Restaurant Payment;Restaurant Payment;card;487144******1234;-320,00;DKK;;;;1217137.50
+2025-08-12;08:30:15;2025-08-12;08:30:15;Electric Bill;Electric Bill;account;;-2.150,00;DKK;;98765432109876;;1217457.50
+2025-08-11;20:45:22;2025-08-12;05:30:18;Google Cloud Services;Google Cloud Services;card;487144******1234;-450,25;DKK;;;;1219607.50
+2025-08-11;15:12:08;2025-08-11;15:12:08;Freelance Payment;Freelance Payment;account;;8.500,00;DKK;55566677788899;;1220057.75
+2025-08-10;13:25:41;2025-08-11;02:15:33;Apple Store Purchase;Apple Store Purchase;card;487144******1234;-2.850,00;DKK;;;;1211557.75
+2025-08-10;09:18:55;2025-08-10;09:18:55;Bank Transfer Fee;Bank Transfer Fee;account;;-15,00;DKK;;;;1214407.75
+2025-08-09;17:33:19;2025-08-10;04:22:11;Microsoft Office 365;Microsoft Office 365;card;487144******1234;-129,00;DKK;;;;1214422.75
+2025-08-09;10:45:27;2025-08-09;10:45:27;Grocery Shopping;Grocery Shopping;card;487144******1234;-680,50;DKK;;;;1214551.75
+2025-08-08;21:15:44;2025-08-09;03:18:25;Airbnb Booking;Airbnb Booking;card;487144******1234;-1.850,00;DKK;;;;1215232.25
+2025-08-08;14:22:33;2025-08-08;14:22:33;International Transfer;International Transfer;internationalPayment;;-5.200,00;DKK;;;;1217082.25
+2025-08-07;16:45:12;2025-08-08;01:30:44;Adobe Creative Suite;Adobe Creative Suite;card;487144******1234;-599,00;DKK;;;;1222282.25
+2025-08-07;11:30:18;2025-08-07;11:30:18;Rent Payment;Rent Payment;account;;-12.000,00;DKK;;11122233344455;;1222881.25
+2025-08-06;19:22:55;2025-08-07;05:15:22;Zoom Subscription;Zoom Subscription;card;487144******1234;-199,00;DKK;;;;1244881.25
+2025-08-06;13:15:33;2025-08-06;13:15:33;Freelance Income;Freelance Income;account;;6.750,00;DKK;77788899900011;;1245080.25
+2025-08-05;08:45:27;2025-08-06;02:30:15;Dropbox Pro;Dropbox Pro;card;487144******1234;-99,00;DKK;;;;1238330.25

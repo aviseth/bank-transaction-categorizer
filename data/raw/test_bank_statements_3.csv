@@ -1,0 +1,21 @@
+Date;Time;Date of posting;Time of posting;Text;Message;Transaction type;Card info;Amount;Currency;Sender;Receiver;Note;Balance
+2025-06-15;08:45:22;2025-06-15;08:45:22;Freelance Payment;Freelance Payment;account;;9.500,00;DKK;12345678901234;;500000.00
+2025-06-15;14:30:15;2025-06-16;06:20:33;Netflix Subscription;Netflix Subscription;card;487144******9999;-89,00;DKK;;;;490500.00
+2025-06-14;17:22:44;2025-06-15;04:15:22;Cloudflare Services;Cloudflare Services;card;487144******9999;-199,00;DKK;;;;490589.00
+2025-06-14;11:15:33;2025-06-14;11:15:33;Rent June;Rent June;account;;-11.000,00;DKK;;98765432109876;;490788.00
+2025-06-13;19:45:18;2025-06-14;03:30:44;Spotify Family;Spotify Family;card;487144******9999;-149,00;DKK;;;;501788.00
+2025-06-13;13:30:27;2025-06-13;13:30:27;Client Payment;Client Payment;account;;18.750,00;DKK;55566677788899;;501937.00
+2025-06-12;16:15:55;2025-06-13;02:45:11;Amazon Prime;Amazon Prime;card;487144******9999;-99,00;DKK;;;;483187.00
+2025-06-12;10:45:22;2025-06-12;10:45:22;Tax Deduction;Tax Deduction;account;;-5.200,00;DKK;;11122233344455;;483286.00
+2025-06-11;18:30:44;2025-06-12;05:15:33;Microsoft Azure;Microsoft Azure;card;487144******9999;-650,25;DKK;;;;488486.00
+2025-06-11;12:22:18;2025-06-11;12:22:18;Freelance Income;Freelance Income;account;;11.200,00;DKK;77788899900011;;489136.25
+2025-06-10;15:45:33;2025-06-11;02:30:15;Uber Eats;Uber Eats;card;487144******9999;-125,50;DKK;;;;477936.25
+2025-06-10;09:30:22;2025-06-10;09:30:22;Bank Transfer Fee;Bank Transfer Fee;account;;-20,00;DKK;;;;478061.75
+2025-06-09;20:15:44;2025-06-10;04:22:11;Adobe Stock;Adobe Stock;card;487144******9999;-299,00;DKK;;;;478081.75
+2025-06-09;14:45:18;2025-06-09;14:45:18;Salary June;Salary June;account;;38.500,00;DKK;;33344455566677;;478380.75
+2025-06-08;17:30:55;2025-06-09;03:15:22;Google Workspace;Google Workspace;card;487144******9999;-399,00;DKK;;;;439880.75
+2025-06-08;11:15:33;2025-06-08;11:15:33;Insurance Premium;Insurance Premium;account;;-2.100,00;DKK;;44455566677788;;440279.75
+2025-06-07;19:22:18;2025-06-08;05:30:44;Notion Pro;Notion Pro;card;487144******9999;-89,00;DKK;;;;442379.75
+2025-06-07;13:45:27;2025-06-07;13:45:27;Freelance Payment;Freelance Payment;account;;6.800,00;DKK;99988877766655;;442468.75
+2025-06-06;16:30:44;2025-06-07;02:15:33;Flight Booking;Flight Booking;card;487144******9999;-1.850,00;DKK;;;;435668.75
+2025-06-06;10:22:15;2025-06-06;10:22:15;International Transfer;International Transfer;internationalPayment;;-4.200,00;DKK;;;;437518.75
