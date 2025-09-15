@@ -13,7 +13,7 @@ class CompactTransactionProcessor(BaseTransactionProcessor):
         self.categorizer = StreamlinedCategorizer(openai_api_key, verify_domains)
 
     def process_vendor_for_transaction(
-        self, vendor_name: str, category: str, vendor_cache: Dict = None
+        self, vendor_name: str, category: str, vendor_cache: Dict = None, transaction_data: Dict = None
     ) -> Tuple[Optional[object], float, str]:
         """Process vendor with caching."""
         if not vendor_name or category != "vendor_payment":
@@ -28,8 +28,14 @@ class CompactTransactionProcessor(BaseTransactionProcessor):
 
         existing = self.vendor_matcher.find_existing_vendor(vendor_name)
         if existing:
-            vendor_cache[vendor_key] = (existing[0], existing[1])
-            return existing[0], existing[1], "database"
+            # Recalculate confidence using dynamic scoring if transaction data available
+            confidence = existing[1]
+            if transaction_data:
+                confidence = self.confidence_calc.calculate_vendor_confidence(
+                    vendor_name, transaction_data, existing[1]
+                )
+            vendor_cache[vendor_key] = (existing[0], confidence)
+            return existing[0], confidence, "database"
 
         vendor_info = self.categorizer.enrich_vendor(vendor_name)
         vendor = self.vendor_matcher.create_or_get_vendor(
@@ -134,7 +140,7 @@ class CompactTransactionProcessor(BaseTransactionProcessor):
             )
 
             vendor, vendor_confidence = self.process_vendor_for_transaction(
-                batch_result.vendor_name, batch_result.category, vendor_cache
+                batch_result.vendor_name, batch_result.category, vendor_cache, transaction_data
             )
 
             if vendor:
@@ -184,7 +190,7 @@ class CompactTransactionProcessor(BaseTransactionProcessor):
             )
 
             vendor, vendor_confidence = self.process_vendor_for_transaction(
-                batch_result.vendor_name, batch_result.category, vendor_cache
+                batch_result.vendor_name, batch_result.category, vendor_cache, transaction_data
             )
 
             if vendor:

@@ -56,7 +56,10 @@ class VendorPaymentsPage:
         col1, col2 = st.columns([0.6, 2.4])
 
         with col1:
-            confidence_options = [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+            # Import confidence calculator to get dynamic options
+            from src.confidence_calculator import ConfidenceCalculator
+            calc = ConfidenceCalculator()
+            confidence_options = calc.get_confidence_range_options(0.1)
             min_confidence = st.selectbox(
                 "Minimum Confidence",
                 options=confidence_options,

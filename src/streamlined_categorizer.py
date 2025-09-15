@@ -18,6 +18,7 @@ except ImportError:
     ANTHROPIC_AVAILABLE = False
 
 from src.prompt_templates import PromptTemplates
+from src.confidence_calculator import ConfidenceCalculator
 
 load_dotenv()
 
@@ -69,6 +70,9 @@ class StreamlinedCategorizer:
         self._domain_cache = {}
         self._prompt_cache = {}
         self._cache_ttl = 3600  # 1 hour TTL for cached items
+
+        # Initialize confidence calculator
+        self.confidence_calc = ConfidenceCalculator()
 
         if ANTHROPIC_AVAILABLE:
             try:
@@ -161,15 +165,24 @@ Return a JSON object with:
         result = self._make_api_call(
             prompt, "You are a financial transaction categorization expert."
         )
-        return (
-            TransactionCategory(**result)
-            if result
-            else TransactionCategory(
+        if result:
+            # Use dynamic confidence calculation if LLM provided one
+            llm_confidence = result.get('confidence')
+            calculated_confidence = self.confidence_calc.calculate_category_confidence(
+                transaction, result.get('category', 'other'), llm_confidence
+            )
+            result['confidence'] = calculated_confidence
+            return TransactionCategory(**result)
+        else:
+            # Calculate fallback confidence for error cases
+            fallback_confidence = self.confidence_calc.calculate_llm_fallback_confidence(
+                transaction, "other"
+            )
+            return TransactionCategory(
                 category="other",
-                confidence=0.0,
+                confidence=fallback_confidence,
                 reasoning="Failed to categorize due to error",
             )
-        )
 
     def identify_vendor(self, transaction: Dict) -> VendorIdentification:
         """Identify vendor from transaction."""
@@ -193,15 +206,21 @@ Return a JSON object with:
             prompt,
             "You are an expert at identifying vendor names from bank transactions.",
         )
-        return (
-            VendorIdentification(**result)
-            if result
-            else VendorIdentification(
+        if result:
+            # Use dynamic vendor confidence calculation
+            vendor_name = result.get('vendor_name')
+            llm_confidence = result.get('confidence')
+            calculated_confidence = self.confidence_calc.calculate_vendor_confidence(
+                vendor_name, transaction, llm_confidence
+            )
+            result['confidence'] = calculated_confidence
+            return VendorIdentification(**result)
+        else:
+            return VendorIdentification(
                 vendor_name=None,
                 confidence=0.0,
                 reasoning="Failed to identify due to error",
             )
-        )
 
     def enrich_vendor(self, vendor_name: str) -> VendorInfo:
         """Enrich vendor information with caching for repeated lookups."""
@@ -226,6 +245,10 @@ Analyze what type of business this is, what they sell/provide, and determine if 
         )
 
         if not result:
+            # Calculate fallback confidence for failed enrichment
+            fallback_confidence = self.confidence_calc.calculate_llm_fallback_confidence(
+                {'text': vendor_name}, None
+            )
             return VendorInfo(
                 name=vendor_name,
                 nicknames=[],
@@ -234,7 +257,7 @@ Analyze what type of business this is, what they sell/provide, and determine if 
                 invoicing_country=None,
                 default_currency=None,
                 default_product_type="services",
-                confidence=0.0,
+                confidence=fallback_confidence,
             )
 
         # Validate and normalize response data
@@ -254,6 +277,12 @@ Analyze what type of business this is, what they sell/provide, and determine if 
         domain = result.get("domain")
         if domain and self.verify_domains:
             is_valid, domain_confidence = self._verify_domain(domain, vendor_name)
+
+            # Apply domain verification results to confidence
+            original_confidence = result.get("confidence", self.confidence_calc.calculate_llm_fallback_confidence({'text': vendor_name}, None))
+            penalty_factor = self.confidence_calc.calculate_domain_penalty_factor(is_valid, domain_confidence)
+            result["confidence"] = original_confidence * penalty_factor
+
             if not is_valid and domain_confidence == 0.0:
                 # If the provided domain failed, try to find a valid domain from cache
                 # This handles cases where AI returns a single invalid domain but we have valid ones cached
@@ -281,7 +310,7 @@ Analyze what type of business this is, what they sell/provide, and determine if 
                             tld != domain.split(".")[-1] if "." in domain else ".com"
                         ):  # Don't retry the same TLD
                             test_domain = f"{base_domain}{tld}"
-                            test_valid, test_confidence = self._verify_domain(
+                            test_valid, _ = self._verify_domain(
                                 test_domain, vendor_name
                             )
                             if test_valid:
@@ -319,15 +348,6 @@ Analyze what type of business this is, what they sell/provide, and determine if 
                     # If we found a valid domain, use it; otherwise keep the original comma-separated string
                     if valid_domain:
                         result["domain"] = valid_domain
-
-                original_confidence = result.get("confidence", 0.5)  # Lower default if LLM didn't provide confidence
-                result["confidence"] = min(
-                    original_confidence,
-                    original_confidence * (0.5 + domain_confidence * 0.5),
-                )
-            else:
-                original_confidence = result.get("confidence", 0.5)  # Lower default if LLM didn't provide confidence
-                result["confidence"] = original_confidence * 0.7
 
         vendor_info = VendorInfo(**result)
 
@@ -386,22 +406,44 @@ Return JSON: {{"results": [{{"transaction_id": 0, "category": "vendor_payment", 
             # Convert to FastBatchResult objects
             for item in batch_results:
                 try:
+                    # Get the original transaction for confidence calculation
+                    transaction_index = item.get("transaction_id", i + len(results)) - i
+                    original_transaction = batch[transaction_index] if transaction_index < len(batch) else {}
+
+                    # Calculate dynamic confidence values
+                    llm_confidence = item.get("confidence")
+                    category = item.get("category", "other")
+                    calculated_confidence = self.confidence_calc.calculate_category_confidence(
+                        original_transaction, category, llm_confidence
+                    )
+
+                    vendor_name = item.get("vendor_name")
+                    llm_vendor_confidence = item.get("vendor_confidence")
+                    calculated_vendor_confidence = self.confidence_calc.calculate_vendor_confidence(
+                        vendor_name, original_transaction, llm_vendor_confidence
+                    ) if vendor_name else 0.0
+
                     results.append(
                         FastBatchResult(
                             transaction_id=item.get("transaction_id", i + len(results)),
-                            category=item.get("category", "other"),
-                            confidence=float(item.get("confidence", 0.5)),  # Lower default if LLM didn't provide confidence
-                            vendor_name=item.get("vendor_name"),
-                            vendor_confidence=float(item.get("vendor_confidence", 0.0)),
+                            category=category,
+                            confidence=calculated_confidence,
+                            vendor_name=vendor_name,
+                            vendor_confidence=calculated_vendor_confidence,
                         )
                     )
                 except Exception as e:
                     print(f"Error processing item: {e}")
+                    # Calculate fallback confidence for error cases
+                    fallback_transaction = batch[len(results)] if len(results) < len(batch) else {}
+                    fallback_confidence = self.confidence_calc.calculate_llm_fallback_confidence(
+                        fallback_transaction, "other"
+                    )
                     results.append(
                         FastBatchResult(
                             transaction_id=i + len(results),
                             category="other",
-                            confidence=0.5,
+                            confidence=fallback_confidence,
                         )
                     )
 
@@ -437,6 +479,7 @@ Return JSON: {{"results": [{{"transaction_id": 0, "category": "vendor_payment", 
                     if not single_domain.startswith(("http://", "https://"))
                     else single_domain
                 )
+                start_time = time.time()
                 response = requests.get(
                     test_url,
                     timeout=2,  # Reduced from 5s to 2s for faster processing
@@ -445,23 +488,21 @@ Return JSON: {{"results": [{{"transaction_id": 0, "category": "vendor_payment", 
                         "User-Agent": "Mozilla/5.0 (compatible; VendorVerifier/1.0)"
                     },
                 )
+                response_time = time.time() - start_time
 
-                if response.status_code != 200:
-                    result = (False, 0.1)
-                else:
-                    content = response.text.lower()
-                    company_lower = company_name.lower()
-                    name_words = company_lower.split()
-                    matches = sum(
-                        1 for word in name_words if len(word) > 2 and word in content
-                    )
+                # Calculate content matches for dynamic scoring
+                content = response.text.lower()
+                company_lower = company_name.lower()
+                name_words = company_lower.split()
+                matches = sum(
+                    1 for word in name_words if len(word) > 2 and word in content
+                )
+                total_words = len(name_words)
 
-                    if matches == 0:
-                        result = (True, 0.2)
-                    elif matches >= len(name_words) * 0.5:
-                        result = (True, 0.8)
-                    else:
-                        result = (True, 0.5)
+                # Use dynamic confidence calculation
+                result = self.confidence_calc.calculate_domain_confidence(
+                    single_domain, company_name, response_time, matches, total_words, response.status_code
+                )
 
             except Exception as e:
                 print(f"Domain verification error for {single_domain}: {e}")

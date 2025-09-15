@@ -4,6 +4,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 from src.models import Transaction, Vendor, get_db_session
 from src.utils import CSVUtils, DatabaseService, DuplicateDetector
 from src.vendor_matcher import VendorMatcher
+from src.confidence_calculator import ConfidenceCalculator
 
 
 class BaseTransactionProcessor:
@@ -14,6 +15,7 @@ class BaseTransactionProcessor:
         self.vendor_matcher = VendorMatcher(self.db_session)
         self.db_service = DatabaseService(self.db_session)
         self.duplicate_detector = DuplicateDetector()
+        self.confidence_calc = ConfidenceCalculator()
 
     def read_csv_file(self, csv_path: str) -> List[Dict]:
         """Read CSV file and extract all transaction data."""
@@ -39,7 +41,7 @@ class BaseTransactionProcessor:
         )
 
     def process_vendor_for_transaction(
-        self, vendor_name: str, category: str, vendor_cache: Dict = None
+        self, vendor_name: str, category: str, vendor_cache: Dict = None, transaction_data: Dict = None
     ) -> Tuple[Optional[Vendor], float, str]:
         """Process vendor identification and creation with caching."""
         if not vendor_name or category != "vendor_payment":
@@ -56,8 +58,14 @@ class BaseTransactionProcessor:
         # Check for existing vendor
         existing = self.vendor_matcher.find_existing_vendor(vendor_name)
         if existing:
-            vendor_cache[vendor_key] = (existing[0], existing[1])
-            return existing[0], existing[1], "database"
+            # Recalculate confidence using dynamic scoring if transaction data available
+            confidence = existing[1]
+            if transaction_data:
+                confidence = self.confidence_calc.calculate_vendor_confidence(
+                    vendor_name, transaction_data, existing[1]
+                )
+            vendor_cache[vendor_key] = (existing[0], confidence)
+            return existing[0], confidence, "database"
 
         # Create new vendor - this will be implemented by subclasses
         # as they may use different enrichment strategies
@@ -137,7 +145,7 @@ class BaseTransactionProcessor:
 
             # Handle vendor processing
             vendor, vendor_confidence, match_source = self.process_vendor_for_transaction(
-                batch_result.vendor_name, batch_result.category, vendor_cache
+                batch_result.vendor_name, batch_result.category, vendor_cache, transaction_data
             )
 
             if vendor:
